@@ -19,3 +19,6 @@
 
 # Go workspace file
 go.work
+
+# Environment variables that might be used to configure the app
+.env

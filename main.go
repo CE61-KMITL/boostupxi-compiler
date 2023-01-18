@@ -1,6 +1,11 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"cebuxi-grader/config"
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func main() {
 	app := fiber.New()
@@ -9,5 +14,5 @@ func main() {
 		return c.SendString("THIS IS A COMPILER OF GRADER WEBSITE FOR CE BOOSTUP XI.💡")
 	})
 
-	app.Listen(":3000")
+	log.Fatal(app.Listen(":" + config.Config("PORT")))
 }
