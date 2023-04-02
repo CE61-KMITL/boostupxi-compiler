@@ -6,15 +6,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type Body struct {
+	SourceCode string `json:"source_code" validate:"required"`
+	QuestionID string `json:"question_id" validate:"required"`
+}
+
 func Compile(c *fiber.Ctx) error {
-	type Body struct {
-		SourceCode string `json:"source_code" validate:"required"`
-		QuestionID string `json:"question_id" validate:"required"`
-	}
 
 	body := new(Body)
 
-	if err := validation.Validate(c, body); err != nil {
+	if err := validation.ValidateStruct(c, body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid body",
 		})

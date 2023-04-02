@@ -7,7 +7,7 @@ import (
 
 var validate = validator.New()
 
-func Validate(c *fiber.Ctx, i interface{}) error {
+func ValidateStruct(c *fiber.Ctx, i interface{}) error {
 	if err := c.BodyParser(i); err != nil {
 		return err
 	}
