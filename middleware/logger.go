@@ -15,7 +15,7 @@ func LoggerMiddleware() fiber.Handler {
 		log.Fatalln("Failed to create log directory")
 	}
 
-	logFilePath := filepath.Join("./logs", "regLog.log")
+	logFilePath := filepath.Join("./logs", "reqLog.log")
 	logFile, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {

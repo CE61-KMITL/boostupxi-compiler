@@ -19,6 +19,7 @@ func main() {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: config.Config("ALLOWED_ORIGINS"),
 		AllowMethods: "GET,POST,PUT,DELETE",
+		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
 	router.SetupRoutes(app)

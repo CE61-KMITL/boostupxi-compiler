@@ -8,4 +8,7 @@ import (
 
 func SetupRoutes(app *fiber.App) {
 	app.Get("/", handler.Hello)
+
+	compile := app.Group("/compile")
+	compile.Post("/", handler.Compile)
 }
