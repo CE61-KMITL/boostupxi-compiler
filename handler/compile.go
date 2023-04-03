@@ -2,9 +2,8 @@ package handler
 
 import (
 	"boostupxi-compiler/model"
+	"boostupxi-compiler/service"
 	"boostupxi-compiler/validation"
-
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,9 +18,13 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	token := c.Get("Authorization")
+	task, err := service.GetTask(c, body.QuestionID)
 
-	fmt.Println(token)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get task",
+		})
+	}
 
-	return c.Status(fiber.StatusOK).JSON(body)
+	return c.Status(fiber.StatusOK).JSON(task)
 }
