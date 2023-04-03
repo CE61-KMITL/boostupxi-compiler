@@ -1,15 +1,15 @@
 package router
 
 import (
-	"boostupxi-compiler/handler"
-	"boostupxi-compiler/middleware"
+	"boostupxi-compiler/handlers"
+	"boostupxi-compiler/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func SetupRoutes(app *fiber.App) {
-	app.Get("/", handler.Hello)
+	app.Get("/", handlers.Hello)
 
 	compile := app.Group("/compile")
-	compile.Post("/", middleware.AuthMiddleware(), handler.Compile)
+	compile.Post("/", middlewares.AuthMiddleware(), handlers.Compile)
 }
