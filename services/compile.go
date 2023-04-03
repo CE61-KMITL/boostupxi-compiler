@@ -1,3 +1,5 @@
 package services
 
-func Compile() {}
+func Compile() {
+	// TODO: compile file
+}

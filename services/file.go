@@ -33,3 +33,7 @@ func CreateFile(sourceCode string) (string, error) {
 
 	return sourceFile, nil
 }
+
+func DeleteFile() {
+	// TODO: delete file
+}
