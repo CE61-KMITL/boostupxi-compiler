@@ -3,6 +3,7 @@ package handlers
 import (
 	"boostupxi-compiler/models"
 	"boostupxi-compiler/services"
+	"boostupxi-compiler/utils"
 	"boostupxi-compiler/validation"
 
 	"github.com/gofiber/fiber/v2"
@@ -26,7 +27,9 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := services.CheckResult(body.SourceCode, task.TestCases)
+	sourceCode := utils.CommentStripped(body.SourceCode)
+
+	result, err := services.CheckResult(sourceCode, task.TestCases)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
