@@ -1,19 +1,16 @@
 package handler
 
 import (
+	"boostupxi-compiler/model"
+	"boostupxi-compiler/service"
 	"boostupxi-compiler/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type Body struct {
-	SourceCode string `json:"source_code" validate:"required"`
-	QuestionID string `json:"question_id" validate:"required"`
-}
-
 func Compile(c *fiber.Ctx) error {
 
-	body := new(Body)
+	body := new(model.CompileRequest)
 
 	if err := validation.ValidateStruct(c, body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -21,5 +18,13 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(body)
+	task, err := service.GetTask(c, body.QuestionID)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get task",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(task)
 }

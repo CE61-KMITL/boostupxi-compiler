@@ -10,7 +10,6 @@ import (
 )
 
 func LoggerMiddleware() fiber.Handler {
-
 	if err := os.MkdirAll("./logs", 0755); err != nil {
 		log.Fatalln("Failed to create log directory")
 	}
@@ -26,6 +25,7 @@ func LoggerMiddleware() fiber.Handler {
 		Output:     logFile,
 		TimeFormat: "02-01-2006 15:04:05",
 		TimeZone:   "Asia/Bangkok",
-		Format:     "${time}\t${status}\t${method}\t${path}\t${ip}\t${latency}\n",
+		Format:     "${time} ${id} ${status} ${method} ${path} ${ip} ${ua} ${latency}\n",
 	})
 }
+
