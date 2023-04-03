@@ -26,7 +26,16 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	services.CheckResult(body.SourceCode, task.TestCases)
+	result, err := services.CheckResult(body.SourceCode, task.TestCases)
 
-	return c.Status(fiber.StatusOK).JSON(task)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to check result",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Success",
+		"result":  result,
+	})
 }

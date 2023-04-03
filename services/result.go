@@ -2,36 +2,13 @@ package services
 
 import (
 	"boostupxi-compiler/models"
-
-	"log"
-	"os"
-	"path/filepath"
 )
 
-func CheckResult(sourceCode string, testcases []models.TestCase) {
-	// TODO: create temp directory
-	if err := os.MkdirAll("./temp", 0755); err != nil {
-		log.Fatalln("Failed to create temp directory")
-	}
-
-	// TODO: convert source code to file
-	sourceFile := filepath.Join("./temp", "main.cpp")
-	file, err := os.Create(sourceFile)
+func CheckResult(sourceCode string, testcases []models.TestCase) (string, error) {
+	_, err := CreateFile(sourceCode)
 
 	if err != nil {
-		log.Fatalln("Failed to create source file")
-	}
-
-	_, err = file.WriteString(sourceCode)
-
-	if err != nil {
-		log.Fatalln("Failed to write source code to file")
-	}
-
-	err = file.Close()
-
-	if err != nil {
-		log.Fatalln("Failed to close source file")
+		return "", err
 	}
 
 	// TODO: compile file
@@ -44,4 +21,5 @@ func CheckResult(sourceCode string, testcases []models.TestCase) {
 
 	// TODO: return result
 
+	return "", nil
 }
