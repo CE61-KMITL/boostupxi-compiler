@@ -1,3 +1,5 @@
 package utils
 
-func CheckBannedLibrary() {}
+func CheckBannedLibrary(sourceCode string) string {
+	return sourceCode
+}
