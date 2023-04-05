@@ -1,6 +1,7 @@
 package router
 
 import (
+	"boostupxi-compiler/config"
 	_ "boostupxi-compiler/docs"
 	"boostupxi-compiler/handlers"
 	"boostupxi-compiler/middlewares"
@@ -15,6 +16,8 @@ func SetupRoutes(app *fiber.App) {
 	compile := app.Group("/compile")
 	compile.Post("/", middlewares.AuthMiddleware(), handlers.Compile)
 
-	docs := app.Group("/docs")
-	docs.Get("/*", swagger.HandlerDefault)
+	if config.Config("ENV") == "development" {
+		docs := app.Group("/docs")
+		docs.Get("/*", swagger.HandlerDefault)
+	}
 }
