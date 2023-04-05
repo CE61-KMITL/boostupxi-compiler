@@ -2,7 +2,7 @@ package main
 
 import (
 	"boostupxi-compiler/config"
-	"boostupxi-compiler/middleware"
+	"boostupxi-compiler/middlewares"
 	"boostupxi-compiler/router"
 
 	"log"
@@ -14,7 +14,7 @@ import (
 func main() {
 	app := fiber.New()
 
-	app.Use(middleware.LoggerMiddleware())
+	app.Use(middlewares.LoggerMiddleware())
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: config.Config("ALLOWED_ORIGINS"),

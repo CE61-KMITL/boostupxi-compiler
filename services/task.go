@@ -1,8 +1,8 @@
-package service
+package services
 
 import (
 	"boostupxi-compiler/config"
-	"boostupxi-compiler/model"
+	"boostupxi-compiler/models"
 
 	"encoding/json"
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetTask(c *fiber.Ctx, questionID string) (*model.Task, error) {
+func GetTask(c *fiber.Ctx, questionID string) (*models.Task, error) {
 	client := http.Client{}
 
 	url := fmt.Sprintf("%s/tasks/%s", config.Config("API_URL"), questionID)
@@ -32,7 +32,7 @@ func GetTask(c *fiber.Ctx, questionID string) (*model.Task, error) {
 
 	defer response.Body.Close()
 
-	task := new(model.Task)
+	task := new(models.Task)
 	if err := json.NewDecoder(response.Body).Decode(task); err != nil {
 		return nil, err
 	}

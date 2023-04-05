@@ -1,4 +1,4 @@
-package model
+package models
 
 type CompileRequest struct {
 	SourceCode string `json:"source_code" validate:"required"`

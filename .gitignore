@@ -26,3 +26,7 @@ go.work
 tmp
 
 logs
+
+temp
+
+.scannerwork
