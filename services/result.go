@@ -9,11 +9,13 @@ import (
 )
 
 func CheckResult(sourceCode string, testcases []models.TestCase) (string, error) {
-	if err := os.MkdirAll("./temp", 0755); err != nil {
+	tempDir := "./temp"
+
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return "", err
 	}
 
-	sourceFilePath := filepath.Join("./temp", "main.cpp")
+	sourceFilePath := filepath.Join(tempDir, "main.cpp")
 	file, err := os.Create(sourceFilePath)
 
 	if err != nil {
@@ -26,7 +28,7 @@ func CheckResult(sourceCode string, testcases []models.TestCase) (string, error)
 		return "", err
 	}
 
-	exeFilePath := filepath.Join("./temp", "main")
+	exeFilePath := filepath.Join(tempDir, "main")
 	cmd := exec.Command("g++", "-o", exeFilePath, sourceFilePath)
 
 	if err := cmd.Run(); err != nil {
