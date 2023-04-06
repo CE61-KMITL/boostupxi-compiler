@@ -2,55 +2,44 @@ package utils
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func CheckFromPath(folderPath string, sourceCode string) (string, error) {
+func CheckBannedLibrary(sourceCode string) (string, error) {
+	libBannedPath := filepath.Join("./constants", "libBanned.BAN")
 
-	folder, err := os.Open(folderPath)
+	libBannedfile, err := os.Open(libBannedPath)
+
 	if err != nil {
-		return "", fmt.Errorf("error opening folder '%s'", folderPath)
-	}
-	defer folder.Close()
-
-	files, err := folder.Readdir(-1)
-	if err != nil {
-		return "", fmt.Errorf("error reading folder '%s': %w", folderPath, err)
+		return "", err
 	}
 
-	for _, file := range files {
+	defer libBannedfile.Close()
 
-		if file.IsDir() {
-			continue
-		}
+	scanner := bufio.NewScanner(libBannedfile)
 
-		filePath := filepath.Join(folderPath, file.Name())
-		file, err := os.Open(filePath)
-		if err != nil {
-			return "", fmt.Errorf("error opening file '%s': %w", file.Name(), err)
-		}
-		defer file.Close()
-
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			if strings.Contains(sourceCode, scanner.Text()) {
-				return scanner.Text(), nil
-			}
-		}
-		if err := scanner.Err(); err != nil {
-			
-			return "", fmt.Errorf("error reading file '%s': %w", file.Name(), err)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(sourceCode, line) {
+			return "", err
 		}
 	}
-	return "", nil
-}
 
-func CheckBannedLibrary(sourceCode string) string {
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
 
-	CheckFromPath("./constants/", sourceCode)
+	if strings.Contains(sourceCode, "#include") {
+		lastIndex := strings.LastIndex(sourceCode, "#include")
+		indexOfGreaterThan := strings.Index(sourceCode[lastIndex:], ">")
 
-	return sourceCode
+		sourceCode = sourceCode[:lastIndex+indexOfGreaterThan+1] + "\n#include \"../constants/banned.h\"" + sourceCode[lastIndex+indexOfGreaterThan+1:]
+
+	} else {
+		sourceCode = "#include \"../constants/banned.h\"\n" + sourceCode
+	}
+
+	return sourceCode, nil
 }

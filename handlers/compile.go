@@ -27,7 +27,13 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	sourceCode := utils.CommentStripped(body.SourceCode)
+	sourceCode, err := utils.CheckBannedLibrary(utils.CommentStripped(body.SourceCode))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Banned library found",
+		})
+	}
 
 	result, err := services.CheckResult(sourceCode, task.TestCases)
 
