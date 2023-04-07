@@ -7,9 +7,12 @@ This is a compiler API for the BoostupXI website.
 | Status | Description             |
 | ------ | ----------------------- |
 | P      | The test passed.        |
-| F      | The test failed.        |
-| T      | The test timed out.     |
 | E      | The test errored.       |
+| T      | The test timed out.     |
 | R      | The test run timed out. |
 | O      | The test out of buffer. |
 | -      | The test was not run.   |
+| C      | Created File Error      |
+| L      | Library Ban             |
+| W      | Testcase Error          |
+| B      | Build Error             |
