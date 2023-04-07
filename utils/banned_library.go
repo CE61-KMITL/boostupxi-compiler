@@ -20,12 +20,21 @@ func CheckBannedLibrary(sourceCode string) (string, error) {
 
 	scanner := bufio.NewScanner(libBannedfile)
 
+	isBannedLibrary := false
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(sourceCode, line) {
-			return "", err
+			isBannedLibrary = true
+			break
 		}
 	}
+
+	if isBannedLibrary {
+		return "", err
+	}
+
+	
 
 	if err := scanner.Err(); err != nil {
 		return "", err

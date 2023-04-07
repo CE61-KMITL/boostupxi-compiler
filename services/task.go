@@ -14,9 +14,9 @@ import (
 func GetTask(c *fiber.Ctx, questionID string) (*models.Task, error) {
 	client := http.Client{}
 
-	url := fmt.Sprintf("%s/tasks/%s", config.Config("API_URL"), questionID)
+	apiUrl := fmt.Sprintf("%s/tasks/%s", config.Config("API_URL"), questionID)
 
-	request, err := http.NewRequest("GET", url, nil)
+	request, err := http.NewRequest(http.MethodGet, apiUrl, nil)
 
 	if err != nil {
 		return nil, err
@@ -28,6 +28,10 @@ func GetTask(c *fiber.Ctx, questionID string) (*models.Task, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("GET_TASK_FAILED")
 	}
 
 	defer response.Body.Close()

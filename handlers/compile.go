@@ -15,7 +15,7 @@ func Compile(c *fiber.Ctx) error {
 
 	if err := validation.ValidateStruct(c, body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid body",
+			"message": "INVALID_REQUEST_BODY",
 		})
 	}
 
@@ -23,28 +23,23 @@ func Compile(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to get task",
+			"message": "GET_TASK_FAILED",
 		})
 	}
 
-	sourceCode, err := utils.CheckBannedLibrary(utils.CommentStripped(body.SourceCode))
+	sourceCode := utils.CommentStripped(body.SourceCode)
 
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Banned library found",
-		})
-	}
+	// _, err := services.CheckResult(sourceCode, task.TestCases)
 
-	result, err := services.CheckResult(sourceCode, task.TestCases)
-
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to check result",
-		})
-	}
+	// if err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"message": "CHECK_RESULT_FAILED",
+	// 	})
+	// }
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Success",
-		"result":  result,
+		"message":    "Success",
+		"task":       task,
+		"sourceCode": sourceCode,
 	})
 }
