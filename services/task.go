@@ -5,6 +5,7 @@ import (
 	"boostupxi-compiler/models"
 
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -31,7 +32,7 @@ func GetTask(c *fiber.Ctx, questionID string) (*models.Task, error) {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GET_TASK_FAILED")
+		return nil, errors.New("GET_TASK_FAILED")
 	}
 
 	defer response.Body.Close()

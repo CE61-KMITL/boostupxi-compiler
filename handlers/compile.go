@@ -27,19 +27,26 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	sourceCode := utils.CommentStripped(body.SourceCode)
+	sourceCode, err := utils.CheckBannedLibrary(utils.CommentStripped(body.SourceCode))
 
-	// _, err := services.CheckResult(sourceCode, task.TestCases)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "BANNED_LIBRARY",
+		})
+	}
 
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"message": "CHECK_RESULT_FAILED",
-	// 	})
-	// }
+	result, err := services.CheckResult(sourceCode, task.TestCases)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "CHECK_RESULT_FAILED",
+		})
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message":    "Success",
 		"task":       task,
 		"sourceCode": sourceCode,
+		"result":     result,
 	})
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,31 +11,22 @@ import (
 func CheckBannedLibrary(sourceCode string) (string, error) {
 	libBannedPath := filepath.Join("./constants", "libBanned.BAN")
 
-	libBannedfile, err := os.Open(libBannedPath)
+	libBannedFile, err := os.Open(libBannedPath)
 
 	if err != nil {
 		return "", err
 	}
 
-	defer libBannedfile.Close()
+	defer libBannedFile.Close()
 
-	scanner := bufio.NewScanner(libBannedfile)
-
-	isBannedLibrary := false
+	scanner := bufio.NewScanner(libBannedFile)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(sourceCode, line) {
-			isBannedLibrary = true
-			break
+			return "", errors.New("BANNED_LIBRARY")
 		}
 	}
-
-	if isBannedLibrary {
-		return "", err
-	}
-
-	
 
 	if err := scanner.Err(); err != nil {
 		return "", err

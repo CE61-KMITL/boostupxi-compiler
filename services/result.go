@@ -35,5 +35,5 @@ func CheckResult(sourceCode string, testcases []models.TestCase) (string, error)
 		return "", err
 	}
 
-	return "", nil
+	return "success", nil
 }
