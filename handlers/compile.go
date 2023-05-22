@@ -3,7 +3,6 @@ package handlers
 import (
 	"boostupxi-compiler/models"
 	"boostupxi-compiler/services"
-	"boostupxi-compiler/utils"
 	"boostupxi-compiler/validation"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,15 +26,7 @@ func Compile(c *fiber.Ctx) error {
 		})
 	}
 
-	sourceCode, err := utils.CheckBannedLibrary(utils.CommentStripped(body.SourceCode))
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "BANNED_LIBRARY",
-		})
-	}
-
-	result, err := services.CheckResult(sourceCode, task.TestCases)
+	result, err := services.CheckResult(body.SourceCode, task.TestCases)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -44,9 +35,7 @@ func Compile(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":    "Success",
-		"task":       task,
-		"sourceCode": sourceCode,
-		"result":     result,
+		"message": "Success",
+		"result":  result,
 	})
 }
