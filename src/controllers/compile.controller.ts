@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { RequestWithUser } from "../interfaces/auth.interface";
+import strip from "strip-comments";
 
 const compile = async (req: Request, res: Response) => {
-  console.log((req as RequestWithUser).user);
+  const sourceCode = strip(req.body.sourceCode);
+  console.log(sourceCode);
   return res.status(200).send("Compiled!");
 };
 
