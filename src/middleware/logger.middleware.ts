@@ -27,7 +27,15 @@ const logEvents = async (message: string, filename: string) => {
 };
 
 export const logger = (req: Request, res: Response, next: NextFunction) => {
-  const logMessage = `${req.method}\t${req.url}\t${req.ip}`;
-  logEvents(logMessage, "reqLog.log");
+  const { method, originalUrl, ip } = req;
+  const userAgent = req.headers["user-agent"];
+
+  res.on("finish", () => {
+    const contentLength = res.get("content-length");
+    const { statusCode } = res;
+
+    const logMessage = `${method}\t${originalUrl}\t${statusCode}\t${contentLength}\t${userAgent}\t${ip}`;
+    logEvents(logMessage, "reqLog.log");
+  });
   next();
 };
