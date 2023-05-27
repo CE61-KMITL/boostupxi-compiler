@@ -1,4 +1,4 @@
-import e, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
 
 export const validate =
@@ -10,8 +10,8 @@ export const validate =
         query: req.query,
         params: req.params,
       });
-      next();
+      return next();
     } catch (error) {
-      return res.status(400).send("Invalid request body!");
+      return res.status(400).json({ message: "INVALID_REQUEST_BODY" });
     }
   };
