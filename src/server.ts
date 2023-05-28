@@ -4,9 +4,9 @@ import cors from "cors";
 
 import { baseRouter } from "./routes/base.route";
 import { compileRouter } from "./routes/compile.route";
-
 import { corsOptions } from "./config/corsOptions";
-import { logger } from "./middleware/logger.middleware";
+import { logger } from "./middlewares/logger.middleware";
+import { environment } from "./config/environment";
 
 config();
 
@@ -20,6 +20,6 @@ app.use(cors<Request>(corsOptions));
 app.use("/", baseRouter);
 app.use("/compile", compileRouter);
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}🚀`)
+app.listen(environment.PORT, () =>
+  console.log(`Server running on port ${environment.PORT}🚀`)
 );

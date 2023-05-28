@@ -1,3 +1,4 @@
+import axios from "axios";
 import { api } from "./api.service";
 
 export const userService = {
@@ -8,6 +9,7 @@ export const userService = {
       });
       return response.data;
     } catch (error) {
+      console.log(error);
       throw new Error("Can't get user profile.");
     }
   },

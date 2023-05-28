@@ -1,6 +1,7 @@
 import { CorsOptions } from "cors";
+import {environment} from "./environment"
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+const allowedOrigins = environment.ALLOWED_ORIGINS?.split(",") || [];
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
