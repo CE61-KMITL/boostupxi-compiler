@@ -12,7 +12,7 @@ export const compilerService = {
   ) => {
     try {
       const currentDirname = fileURLToPath(import.meta.url);
-      const folderPath = path.resolve(currentDirname, "../../../temp");
+      const folderPath = path.resolve(currentDirname, "../../../temp/cpp");
       const filePath = path.resolve(folderPath, `${filename}.cpp`);
 
       const [status, updatedSourceCode] = addBanned(sourceCode);
@@ -23,10 +23,10 @@ export const compilerService = {
       }
 
       if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
+        fs.mkdirSync(folderPath, { recursive: true });
       }
 
-      fs.writeFileSync(filePath, updatedSourceCode as string);  
+      fs.writeFileSync(filePath, updatedSourceCode as string);
       callback(null, filePath);
     } catch (error: Error | any) {
       callback(error, null);
