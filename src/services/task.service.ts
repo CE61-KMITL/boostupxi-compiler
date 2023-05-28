@@ -1,9 +1,9 @@
 import { api } from "./api.service";
 
 export const taskService = {
-  get: async (token: string) => {
+  getTestCases: async (taskId: string, token: string) => {
     try {
-      const response = await api.get("/tasks", {
+      const response = await api.get(`/tasks/${taskId}/testcases`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;

@@ -1,6 +1,7 @@
 import express, { Application, Request } from "express";
 import { config } from "dotenv";
 import cors from "cors";
+import helmet from "helmet";
 
 import { baseRouter } from "./routes/base.route";
 import { compileRouter } from "./routes/compile.route";
@@ -16,6 +17,7 @@ app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors<Request>(corsOptions));
+app.use(helmet());
 
 app.use("/", baseRouter);
 app.use("/compile", compileRouter);
