@@ -9,7 +9,6 @@ export const userService = {
       });
       return response.data;
     } catch (error) {
-      console.log(error);
       throw new Error("Can't get user profile.");
     }
   },
