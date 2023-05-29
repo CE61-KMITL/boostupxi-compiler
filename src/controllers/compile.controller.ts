@@ -3,6 +3,7 @@ import strip from "strip-comments";
 import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
 import { compilerService } from "../services/compiler.service";
+import { resultService } from "../services/result.service";
 
 const compile = async (req: Request, res: Response) => {
   try {
@@ -17,34 +18,12 @@ const compile = async (req: Request, res: Response) => {
       return res.status(404).send("Question not found!");
     }
 
-    compilerService.create(
-      sourceCode,
-      `${process.pid}`,
-      (createError, filePath) => {
-        if (createError) {
-          return res.status(500).json({
-            message: "INTERNAL_SERVER_ERROR",
-          });
-        }
+    const status = await resultService.checkResult(sourceCode, testcases);  
 
-        console.log(filePath);
-
-        compilerService.compile(
-          filePath as string,
-          (compileError, compiledFilePath) => {
-            if (compileError) {
-              return res.status(500).json({
-                message: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            console.log(compileError, compiledFilePath);
-            return res.status(200).send("Compiled!");
-          }
-        );
-      }
-    );
+    return res.status(200).json({
+      status
+    });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "INTERNAL_SERVER_ERROR",
     });

@@ -1,8 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { execFile, execSync } from "child_process";
+import { execSync, execFile } from "child_process";
 import { fileURLToPath } from "url";
 import { addBanned } from "../utils/banned.util";
+
+interface ExecutionResult {
+  result: string;
+}
 
 export const compilerService = {
   create: async (
@@ -54,6 +58,81 @@ export const compilerService = {
       callback(error instanceof Error ? error.message : error, null);
     }
   },
-  run: (filepath: string, input: string[]) => {},
-  checkAnswer: (userOutout: string[], testcaseOutput: string[]) => {},
+  run: async (filepath: string, input: string): Promise<ExecutionResult> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const options = {
+          timeout: 1000,
+          maxBuffer: 1024 * 1024,
+        };
+
+        const child = await execFile(
+          filepath,
+          options,
+          (error, stdout, stderr) => {
+            if (error) {
+              if (error.signal && error.signal === "SIGTERM") {
+                resolve({
+                  result: "TIMEOUT",
+                });
+              } else if (
+                error.code &&
+                error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER"
+              ) {
+                resolve({
+                  result: "OUT_OF_BUFFER",
+                });
+              } else {
+                resolve({
+                  result: "RUNTIME_ERROR",
+                });
+              }
+            } else if (stderr) {
+              resolve({
+                result: "FAILED",
+              });
+            } else {
+              resolve({
+                result: stdout,
+              });
+              return;
+            }
+          }
+        );
+        if (input !== "") {
+          child.stdin?.pipe(child.stdin);
+          child.stdin?.setDefaultEncoding("utf-8");
+          child.stdin?.write(input);
+          child.stdin?.end();
+          child.stdin?.on("error", (error: Error) => {
+            if (error.message !== "write") {
+              resolve({ result: "ERROR" });
+            }
+          });
+        }
+      } catch (error) {
+        console.log((error as Error).message);
+      }
+    });
+  },
+  checkOutputEquality: (userOutput: string, testcaseOutput: string) => {
+    try {
+      const userLines = userOutput.trim().split(/\r?\n/);
+      const testcaseLines = testcaseOutput.trim().split(/\r?\n/);
+  
+      if (userLines.length !== testcaseLines.length) {
+        return false;
+      }
+  
+      for (let i = 0; i < userLines.length; i++) {
+        if (userLines[i].trim() !== testcaseLines[i].trim()) {
+          return false;
+        }
+      }
+  
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
 };
