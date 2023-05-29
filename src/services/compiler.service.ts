@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { exec, execFile } from "child_process";
+import { execFile, execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { addBanned } from "../utils/banned.util";
 
@@ -32,7 +32,28 @@ export const compilerService = {
       callback(error, null);
     }
   },
-  compile: async (filepath: string, callback: () => void) => {},
+  compile: async (
+    filepath: string,
+    callback: (args1: Error | null | string, args2: string | null) => void
+  ) => {
+    try {
+      const regex = /([^\\/:*?"<>|\r\n]+)\.\w+$/;
+      const filenameMatch = filepath.match(regex);
+      const filename = filenameMatch ? filenameMatch[1] : null;
+
+      if (!filename) {
+        throw new Error("INVALID_FILEPATH");
+      }
+      if (!fs.existsSync("./temp/exe")) {
+        fs.mkdirSync("./temp/exe", { recursive: true });
+      }
+
+      execSync(`g++ -w -std=c++14 ${filepath} -o ./temp/exe/${filename}`);
+      callback(null, `./temp/exe/${filename}`);
+    } catch (error: Error | any) {
+      callback(error instanceof Error ? error.message : error, null);
+    }
+  },
   run: (filepath: string, input: string[]) => {},
   checkAnswer: (userOutout: string[], testcaseOutput: string[]) => {},
 };

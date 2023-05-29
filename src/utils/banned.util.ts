@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 
 export const addBanned = (sourceCode: string): (number | string)[] => {
   const currentDirname = path.dirname(fileURLToPath(import.meta.url));
-  const bannedLibFilePath = path.join(currentDirname, "../data/libBanned.BAN");
+  const bannedLibFilePath = path.join(currentDirname, "../../data/libBanned.BAN");
   const bannedLibraries = fs
     .readFileSync(bannedLibFilePath, "utf-8")
     .split("\r\n");
@@ -21,7 +21,7 @@ export const addBanned = (sourceCode: string): (number | string)[] => {
 
   try {
     if (!sourceCode.includes("#include")) {
-      return [1, `#include "../data/banned.h"\r\n${sourceCode}`];
+      return [1, `#include "../../data/banned.h"\r\n${sourceCode}`];
     }
 
     const includeString = sourceCode.substring(
@@ -35,10 +35,10 @@ export const addBanned = (sourceCode: string): (number | string)[] => {
       0,
       sourceCode.indexOf(includeContent)
     )}
-    \r\n#include "../data/banned.h"\r\n${includeContent}`;
+    \r\n#include "../../data/banned.h"\r\n${includeContent}`;
 
     return [1, updatedSourceCode];
   } catch (error) {
-    return [1, `#include "../data/banned.h"\r\n${sourceCode}`];
+    return [1, `#include "../../data/banned.h"\r\n${sourceCode}`];
   }
 };
