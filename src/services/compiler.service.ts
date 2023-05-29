@@ -61,12 +61,14 @@ export const compilerService = {
   run: async (filepath: string, input: string): Promise<ExecutionResult> => {
     return new Promise(async (resolve, reject) => {
       try {
+        const options = {
+          timeout: 1000,
+          maxBuffer: 1024 * 1024,
+        };
+
         const child = await execFile(
           filepath,
-          {
-            timeout: 1000,
-            maxBuffer: 1024 * 1024,
-          },
+          options,
           (error, stdout, stderr) => {
             if (error) {
               if (error.signal && error.signal === "SIGTERM") {
@@ -113,5 +115,24 @@ export const compilerService = {
       }
     });
   },
-  checkAnswer: (userOutout: string[], testcaseOutput: string[]) => {},
+  checkOutputEquality: (userOutput: string, testcaseOutput: string) => {
+    try {
+      const userLines = userOutput.trim().split(/\r?\n/);
+      const testcaseLines = testcaseOutput.trim().split(/\r?\n/);
+  
+      if (userLines.length !== testcaseLines.length) {
+        return false;
+      }
+  
+      for (let i = 0; i < userLines.length; i++) {
+        if (userLines[i].trim() !== testcaseLines[i].trim()) {
+          return false;
+        }
+      }
+  
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
 };

@@ -7,7 +7,7 @@ export const addBanned = (sourceCode: string): (number | string)[] => {
   const bannedLibFilePath = path.join(currentDirname, "../../data/libBanned.BAN");
   const bannedLibraries = fs
     .readFileSync(bannedLibFilePath, "utf-8")
-    .split("\r\n");
+    .split(/\r?\n/);
 
   for (const bannedLib of bannedLibraries) {
     if (sourceCode.includes(bannedLib)) {

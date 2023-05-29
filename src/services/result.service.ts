@@ -64,16 +64,47 @@ export const resultService = {
                   return;
                 }
 
-                const outputsResult = inputs.map(
-                  async (input: string) => {
-                    return await compilerService.run(filePath as string, input);
+                const outputsResult = inputs.map(async (input: string) => {
+                  return await compilerService.run(filePath as string, input);
+                });
+
+                const userOutputResults = await Promise.all(outputsResult);
+
+                outputs.forEach((output: string, index: number) => {
+                  if (
+                    compilerService.checkOutputEquality(
+                      output,
+                      userOutputResults[index].result
+                    )
+                  ) {
+                    result += "P";
+                  } else {
+                    if (userOutputResults[index].result === "TIMEOUT") {
+                      result += "T";
+                      status = 1;
+                    } else if (
+                      userOutputResults[index].result === "RUNTIME_ERROR"
+                    ) {
+                      result += "R";
+                      status = 1;
+                    } else if (
+                      userOutputResults[index].result === "OUT_OF_BUFFER"
+                    ) {
+                      result += "O";
+                      status = 1;
+                    } else if (userOutputResults[index].result === "ERROR") {
+                      result += "E";
+                      status = 1;
+                    } else {
+                      result += "-";
+                      status = 1;
+                    }
                   }
-                );
-
-                const results = await Promise.all(outputsResult);
-
-                console.log(results);
-
+                });
+                resolve({
+                  result,
+                  status,
+                });
               }
             );
           }
