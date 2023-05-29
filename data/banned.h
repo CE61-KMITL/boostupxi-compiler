@@ -1,6 +1,6 @@
 #ifndef BANNED_H
 #define BANNED_H
-#define BANNED(func) sorry_##func##_is_a_banned_function
+#define BANNED(func) SORRY_##func##_IS_A_BANNED_FUNCTION
 #undef system
 #define system(...) BANNED(system)
 #undef sort

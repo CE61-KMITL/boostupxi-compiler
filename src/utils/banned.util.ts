@@ -11,12 +11,12 @@ export const addBanned = (sourceCode: string): (number | string)[] => {
 
   for (const bannedLib of bannedLibraries) {
     if (sourceCode.includes(bannedLib)) {
-      return [-1, `${bannedLib}_IS_A_BANNED_LIBRARY`];
+      return [-1, `SORRY_${bannedLib}_IS_A_BANNED_LIBRARY`];
     }
   }
 
   if (sourceCode.includes("system")) {
-    return [-1, "SYSTEM_IS_A_BANNED_LIBRARY"];
+    return [-1, "SORRY_SYSTEM_IS_A_BANNED_LIBRARY"];
   }
 
   try {
