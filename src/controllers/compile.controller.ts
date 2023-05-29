@@ -18,38 +18,11 @@ const compile = async (req: Request, res: Response) => {
       return res.status(404).send("Question not found!");
     }
 
-    const status = await resultService.checkResult(sourceCode, testcases);
+    const status = await resultService.checkResult(sourceCode, testcases);  
 
     return res.status(200).json({
       status
     });
-
-    // compilerService.create(
-    //   sourceCode,
-    //   `${process.pid}`,
-    //   (createError, filePath) => {
-    //     if (createError) {
-    //       return res.status(500).json({
-    //         message: "INTERNAL_SERVER_ERROR",
-    //       });
-    //     }
-
-    //     console.log(filePath);
-
-    //     compilerService.compile(
-    //       filePath as string,
-    //       (compileError, compiledFilePath) => {
-    //         if (compileError) {
-    //           return res.status(500).json({
-    //             message: "INTERNAL_SERVER_ERROR",
-    //           });
-    //         }
-    //         console.log(compileError, compiledFilePath);
-    //         return res.status(200).send("Compiled!");
-    //       }
-    //     );
-    //   }
-    // );
   } catch (error) {
     return res.status(500).json({
       message: "INTERNAL_SERVER_ERROR",

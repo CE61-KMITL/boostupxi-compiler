@@ -1,5 +1,6 @@
 import { ITestCase } from "../interfaces/testcase.interface";
 import { compilerService } from "./compiler.service";
+import { testCasesUtils } from "../utils/testcase.util";
 
 export const resultService = {
   checkResult: async (sourceCode: string, testcases: ITestCase[]) => {
@@ -36,13 +37,13 @@ export const resultService = {
               filePath as string,
               async (compileError, filePath) => {
                 if (compileError) {
-                  result = "S"; 
+                  result = "S";
                   status = 1;
 
                   if (
                     compileError.toString().includes("_IS_A_BANNED_FUNCTION")
-                  ) { 
-                    result = "F"; 
+                  ) {
+                    result = "F";
                   }
 
                   resolve({
@@ -51,10 +52,28 @@ export const resultService = {
                   });
                 }
 
-                resolve({
-                  result: "P",
-                  status: "2",
-                });
+                const inputs = testCasesUtils.input(testcases);
+                const outputs = testCasesUtils.output(testcases);
+
+                if (inputs.length !== outputs.length) {
+                  result = "W";
+                  resolve({
+                    result,
+                    status: 1,
+                  });
+                  return;
+                }
+
+                const outputsResult = inputs.map(
+                  async (input: string) => {
+                    return await compilerService.run(filePath as string, input);
+                  }
+                );
+
+                const results = await Promise.all(outputsResult);
+
+                console.log(results);
+
               }
             );
           }
