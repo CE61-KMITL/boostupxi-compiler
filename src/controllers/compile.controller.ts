@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import strip from "strip-comments";
 import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
-import { compilerService } from "../services/compiler.service";
 import { resultService } from "../services/result.service";
 
 const compile = async (req: Request, res: Response) => {
