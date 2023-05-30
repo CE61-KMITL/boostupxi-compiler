@@ -1,10 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
 export const addBanned = (sourceCode: string): string => {
-  const currentDirname = path.dirname(fileURLToPath(import.meta.url));
-  const bannedLibFilePath = path.join(currentDirname, "../../data/libBanned.BAN");
+  const bannedLibFilePath = path.join(__dirname, "../../data/libBanned.BAN");
   const bannedLibraries = fs
     .readFileSync(bannedLibFilePath, "utf-8")
     .split(/\r?\n/);

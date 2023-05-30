@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { execSync, execFile } from "child_process";
-import { fileURLToPath } from "url";
 import { addBanned } from "../utils/banned.util";
 import {
   ExecutionResult,
@@ -29,8 +28,7 @@ export const compilerService = {
         return { result: "H", filePath: "" };
       }
 
-      const currentDirname = fileURLToPath(import.meta.url);
-      const folderPath = path.resolve(currentDirname, "../../../temp/cpp");
+      const folderPath = path.resolve(__dirname, "../../temp/cpp");
       const filePath = path.resolve(folderPath, `${fileName}.cpp`);
 
       if (!fs.existsSync(folderPath)) {
@@ -40,6 +38,7 @@ export const compilerService = {
       fs.writeFileSync(filePath, updatedSourceCode as string);
       return { result: "", filePath };
     } catch (error) {
+      console.log(error);
       return { result: "C", filePath: "" };
     }
   },
