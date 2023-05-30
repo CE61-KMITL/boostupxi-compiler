@@ -16,7 +16,7 @@ export const compilerService = {
     fileName: string
   ): Promise<ICreateFile> => {
     try {
-      const [status, updatedSourceCode] = addBanned(sourceCode);
+      const updatedSourceCode = addBanned(sourceCode);
 
       if (
         updatedSourceCode.toString().includes("_IS_A_BANNED_LIBRARY") &&
