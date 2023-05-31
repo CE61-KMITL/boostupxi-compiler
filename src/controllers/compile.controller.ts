@@ -3,30 +3,48 @@ import strip from "strip-comments";
 import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
 import { resultService } from "../services/result.service";
+import tress from "tress";
 
-const compile = async (req: Request, res: Response) => {
+const queue = tress((req: any, next: any) => {
   try {
-    const sourceCode = strip(req.body.sourceCode);
+    compile(req.body, (req as RequestWithUser).user.token).then(() => next());
+  } catch (error) {
+    console.log((error as Error).message);
+  }
+});
 
-    const testcases = await taskService.getTestCases(
-      req.body.questionId,
-      (req as RequestWithUser).user.token
-    );
-
-    if (!testcases) {
-      return res.status(404).json({message: "QUESTION_NOT_FOUND"})
-    }
-
-    const status = await resultService.checkResult(sourceCode, testcases);
-
+const add_request_to_queue = async (req: Request, res: Response) => {
+  try {
+    queue.push(req as any);
     return res.status(200).json({
-      status,
+      message: "REQUEST_ADDED_TO_QUEUE",
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "INTERNAL_SERVER_ERROR",
+    return res.status(304).json({
+      message: "FAILED_TO_ADD_REQUEST",
     });
   }
 };
 
-export { compile };
+const compile = async (
+  { sourceCode, questionId }: { sourceCode: string; questionId: string },
+  token: string
+) => {
+  try {
+    const updatedSourceCode = strip(sourceCode);
+
+    const testcases = await taskService.getTestCases(questionId, token);
+
+    const status = await resultService.checkResult(
+      updatedSourceCode,
+      testcases
+    );
+    
+    console.log(status);
+    return status;
+  } catch (error) {
+    console.log((error as Error).message);
+  }
+};
+
+export { add_request_to_queue };
