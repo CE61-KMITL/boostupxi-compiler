@@ -1,64 +1,78 @@
 import fs from "fs";
 import path from "path";
 import { execSync, execFile } from "child_process";
-import { fileURLToPath } from "url";
 import { addBanned } from "../utils/banned.util";
-
-interface ExecutionResult {
-  result: string;
-}
+import {
+  ExecutionResult,
+  ICreateFile,
+  ICompileFile,
+} from "../interfaces/compiler.interface";
+import { testCasesUtils } from "../utils/testcase.util";
 
 export const compilerService = {
-  create: async (
+  createFile: async (
     sourceCode: string,
-    filename: string,
-    callback: (args1: Error | null | string, args2: string | null) => void
-  ) => {
+    fileName: string
+  ): Promise<ICreateFile> => {
     try {
-      const currentDirname = fileURLToPath(import.meta.url);
-      const folderPath = path.resolve(currentDirname, "../../../temp/cpp");
-      const filePath = path.resolve(folderPath, `${filename}.cpp`);
+      const updatedSourceCode = addBanned(sourceCode);
 
-      const [status, updatedSourceCode] = addBanned(sourceCode);
-
-      if (status === -1) {
-        callback(updatedSourceCode as string, null);
-        return;
+      if (
+        updatedSourceCode.toString().includes("_IS_A_BANNED_LIBRARY") &&
+        !updatedSourceCode.toString().includes("SYSTEM")
+      ) {
+        return { result: "L", filePath: "" };
       }
+
+      if (updatedSourceCode.toString().includes("SYSTEM_IS_A_BANNED_LIBRARY")) {
+        return { result: "H", filePath: "" };
+      }
+
+      const folderPath = path.resolve(__dirname, "../../temp/cpp");
+      const filePath = path.resolve(folderPath, `${fileName}.cpp`);
 
       if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath, { recursive: true });
       }
 
       fs.writeFileSync(filePath, updatedSourceCode as string);
-      callback(null, filePath);
-    } catch (error: Error | any) {
-      callback(error, null);
+      return { result: "", filePath };
+    } catch (error) {
+      console.log(error);
+      return { result: "C", filePath: "" };
     }
   },
-  compile: async (
-    filepath: string,
-    callback: (args1: Error | null | string, args2: string | null) => void
-  ) => {
+  compileFile: async (filePath: string): Promise<ICompileFile> => {
     try {
       const regex = /([^\\/:*?"<>|\r\n]+)\.\w+$/;
-      const filenameMatch = filepath.match(regex);
+      const filenameMatch = filePath.match(regex);
       const filename = filenameMatch ? filenameMatch[1] : null;
 
       if (!filename) {
         throw new Error("INVALID_FILEPATH");
       }
-      if (!fs.existsSync("./temp/exe")) {
-        fs.mkdirSync("./temp/exe", { recursive: true });
+
+      const exeFolderPath = "./temp/exe";
+      if (!fs.existsSync(exeFolderPath)) {
+        fs.mkdirSync(exeFolderPath, { recursive: true });
       }
 
-      execSync(`g++ -w -std=c++14 ${filepath} -o ./temp/exe/${filename}`);
-      callback(null, `./temp/exe/${filename}`);
-    } catch (error: Error | any) {
-      callback(error instanceof Error ? error.message : error, null);
+      const executablePath = path.join(exeFolderPath, filename);
+      execSync(`g++ -w -std=c++14 ${filePath} -o ${executablePath}`);
+      return { result: "", executablePath: executablePath };
+    } catch (error) {
+      if (
+        (error as Error).message.toString().includes("_IS_A_BANNED_FUNCTION")
+      ) {
+        return { result: "F", executablePath: "" };
+      }
+      return { result: "S", executablePath: "" };
     }
   },
-  run: async (filepath: string, input: string): Promise<ExecutionResult> => {
+  run: async (
+    executablePath: string,
+    input: string
+  ): Promise<ExecutionResult> => {
     return new Promise(async (resolve, reject) => {
       try {
         const options = {
@@ -67,7 +81,7 @@ export const compilerService = {
         };
 
         const child = await execFile(
-          filepath,
+          executablePath,
           options,
           (error, stdout, stderr) => {
             if (error) {
@@ -95,7 +109,6 @@ export const compilerService = {
               resolve({
                 result: stdout,
               });
-              return;
             }
           }
         );
@@ -111,28 +124,40 @@ export const compilerService = {
           });
         }
       } catch (error) {
-        console.log((error as Error).message);
+        console.log(error);
       }
     });
   },
-  checkOutputEquality: (userOutput: string, testcaseOutput: string) => {
-    try {
-      const userLines = userOutput.trim().split(/\r?\n/);
-      const testcaseLines = testcaseOutput.trim().split(/\r?\n/);
-  
-      if (userLines.length !== testcaseLines.length) {
-        return false;
-      }
-  
-      for (let i = 0; i < userLines.length; i++) {
-        if (userLines[i].trim() !== testcaseLines[i].trim()) {
-          return false;
+  generateResultString: (
+    expectedOutputs: string[],
+    executionResults: ExecutionResult[]
+  ) => {
+    let result = "";
+
+    executionResults.forEach((executionResult, index) => {
+      const expectedOutput = expectedOutputs[index];
+      if (
+        testCasesUtils.checkOutputEquality(
+          expectedOutput,
+          executionResult.result
+        )
+      ) {
+        result += "P";
+      } else {
+        if (executionResult.result === "TIMEOUT") {
+          result += "T";
+        } else if (executionResult.result === "RUNTIME_ERROR") {
+          result += "R";
+        } else if (executionResult.result === "OUT_OF_BUFFER") {
+          result += "O";
+        } else if (executionResult.result === "ERROR") {
+          result += "E";
+        } else {
+          result += "-";
         }
       }
-  
-      return true;
-    } catch (error) {
-      return false;
-    }
+    });
+
+    return result;
   },
 };

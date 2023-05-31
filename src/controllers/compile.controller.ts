@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import strip from "strip-comments";
 import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
-import { compilerService } from "../services/compiler.service";
 import { resultService } from "../services/result.service";
 
 const compile = async (req: Request, res: Response) => {
@@ -15,13 +14,13 @@ const compile = async (req: Request, res: Response) => {
     );
 
     if (!testcases) {
-      return res.status(404).send("Question not found!");
+      return res.status(404).json({message: "QUESTION_NOT_FOUND"})
     }
 
-    const status = await resultService.checkResult(sourceCode, testcases);  
+    const status = await resultService.checkResult(sourceCode, testcases);
 
     return res.status(200).json({
-      status
+      status,
     });
   } catch (error) {
     return res.status(500).json({
