@@ -26,17 +26,16 @@ app.use(helmet());
 app.use("/", baseRouter);
 app.use("/compile", compileRouter);
 
-// if (cluster.isPrimary) {
-//   for (let i = 0; i < coreTotal; i++) {
-//     cluster.fork();
-//   }
+if (cluster.isPrimary) {
+  for (let i = 0; i < coreTotal; i++) {
+    cluster.fork();
+  }
 
-//   cluster.on("exit", (worker, code, signal) => {
-//     console.log(`Worker ${worker.process.pid} died`);
-//   });
-// } else {
-// }
-
-app.listen(environment.PORT, () =>
-  console.log(`Server running on port ${environment.PORT}🚀`)
-);
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  app.listen(environment.PORT, () =>
+    console.log(`Server running on port ${environment.PORT}🚀`)
+  );
+}

@@ -17,11 +17,11 @@ const queue = tress((req: any, next: any) => {
 const add_request_to_queue = async (req: Request, res: Response) => {
   try {
     queue.push(req as any);
-    return res.status(200).json({
+    res.status(200).json({
       message: "REQUEST_ADDED_TO_QUEUE",
     });
   } catch (error) {
-    return res.status(304).json({
+    res.status(304).json({
       message: "FAILED_TO_ADD_REQUEST",
     });
   }
@@ -41,16 +41,13 @@ const compile = async (
       testcases
     );
 
-    const result = await submissionService.submit(
+    await submissionService.submit(
       {
         questionId,
         compilationResult: status.result,
       },
       token
     );
-
-    console.log(result);
-    return status;
   } catch (error) {
     console.log((error as Error).message);
   }
