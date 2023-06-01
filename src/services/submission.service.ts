@@ -4,9 +4,8 @@ import { api } from "./api.service";
 export const submissionService = {
   submit: async (body: ISubmission, token: string) => {
     try {
-      const response = await api.post("/submission/", {
+      const response = await api.post("/submission/", body, {
         headers: { Authorization: `Bearer ${token}` },
-        body,
       });
       return response.data;
     } catch (error) {
