@@ -4,6 +4,7 @@ import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
 import { resultService } from "../services/result.service";
 import tress from "tress";
+import { submissionService } from "../services/submission.service";
 
 const queue = tress((req: any, next: any) => {
   try {
@@ -39,8 +40,16 @@ const compile = async (
       updatedSourceCode,
       testcases
     );
-    
-    console.log(status);
+
+    const result = await submissionService.submit(
+      {
+        questionId,
+        compilationResult: status.result,
+      },
+      token
+    );
+
+    console.log(result);
     return status;
   } catch (error) {
     console.log((error as Error).message);
