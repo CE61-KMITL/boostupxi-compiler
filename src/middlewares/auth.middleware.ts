@@ -25,7 +25,6 @@ export const authorization = async (
     if (decoded.role !== "user") {
       return res.status(401).json({ message: "UNAUTHORIZED" });
     }
-
     const user: IUser | null = await userService.profile(token);
 
     if (!user) {

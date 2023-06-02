@@ -13,7 +13,7 @@ export const resultService = {
       }
 
       const { result: compileFileResult, executablePath } =
-        await compilerService.compileFile(filePath as string);
+        await compilerService.compileFile(filePath);
 
       if (compileFileResult !== "") {
         return { result: compileFileResult };
