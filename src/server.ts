@@ -14,7 +14,6 @@ import { environment } from "./config/environment";
 config();
 
 const app: Application = express();
-
 const coreTotal: number = os.cpus().length;
 
 app.use(logger);
@@ -35,7 +34,11 @@ if (cluster.isPrimary) {
     console.log(`Worker ${worker.process.pid} died`);
   });
 } else {
-  app.listen(environment.PORT, () =>
-    console.log(`Server running on port ${environment.PORT}🚀`)
-  );
+  const startServer = () => {
+    app.listen(environment.PORT, () =>
+      console.log(`Server running on port ${environment.PORT}🚀`)
+    );
+  };
+
+  startServer();
 }

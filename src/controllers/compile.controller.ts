@@ -14,7 +14,7 @@ const queue = tress((req: any, next: any) => {
   }
 });
 
-const add_request_to_queue = async (req: Request, res: Response) => {
+export const add_request_to_queue = async (req: Request, res: Response) => {
   try {
     queue.push(req as any);
     res.status(200).json({
@@ -53,5 +53,3 @@ const compile = async (
     console.log((error as Error).message);
   }
 };
-
-export { add_request_to_queue };
