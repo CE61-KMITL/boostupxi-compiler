@@ -4,6 +4,7 @@ import { RequestWithUser } from "../interfaces/auth.interface";
 import { taskService } from "../services/task.service";
 import { resultService } from "../services/result.service";
 import tress from "tress";
+import { submissionService } from "../services/submission.service";
 
 const queue = tress((req: any, next: any) => {
   try {
@@ -16,11 +17,11 @@ const queue = tress((req: any, next: any) => {
 const add_request_to_queue = async (req: Request, res: Response) => {
   try {
     queue.push(req as any);
-    return res.status(200).json({
+    res.status(200).json({
       message: "REQUEST_ADDED_TO_QUEUE",
     });
   } catch (error) {
-    return res.status(304).json({
+    res.status(304).json({
       message: "FAILED_TO_ADD_REQUEST",
     });
   }
@@ -39,9 +40,15 @@ const compile = async (
       updatedSourceCode,
       testcases
     );
-    
-    console.log(status);
-    return status;
+
+    await submissionService.submit(
+      {
+        questionId,
+        compilationResult: status.result,
+        source_code: updatedSourceCode,
+      },
+      token
+    );
   } catch (error) {
     console.log((error as Error).message);
   }
