@@ -18,13 +18,13 @@ export const compilerService = {
       const updatedSourceCode = addBanned(sourceCode);
 
       if (
-        updatedSourceCode.toString().includes("_IS_A_BANNED_LIBRARY") &&
-        !updatedSourceCode.toString().includes("SYSTEM")
+        updatedSourceCode.includes("_IS_A_BANNED_LIBRARY") &&
+        !updatedSourceCode.includes("SYSTEM")
       ) {
         return { result: "L", filePath: "" };
       }
 
-      if (updatedSourceCode.toString().includes("SYSTEM_IS_A_BANNED_LIBRARY")) {
+      if (updatedSourceCode.includes("SYSTEM_IS_A_BANNED_LIBRARY")) {
         return { result: "H", filePath: "" };
       }
 
@@ -35,7 +35,7 @@ export const compilerService = {
         fs.mkdirSync(folderPath, { recursive: true });
       }
 
-      fs.writeFileSync(filePath, updatedSourceCode as string);
+      fs.writeFileSync(filePath, updatedSourceCode);
       return { result: "", filePath };
     } catch (error) {
       console.log(error);
@@ -61,9 +61,7 @@ export const compilerService = {
       execSync(`g++ -w -std=c++14 ${filePath} -o ${executablePath}`);
       return { result: "", executablePath: executablePath };
     } catch (error) {
-      if (
-        (error as Error).message.toString().includes("_IS_A_BANNED_FUNCTION")
-      ) {
+      if (error.message.includes("_IS_A_BANNED_FUNCTION")) {
         return { result: "F", executablePath: "" };
       }
       return { result: "S", executablePath: "" };

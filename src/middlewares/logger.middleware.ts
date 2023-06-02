@@ -27,12 +27,18 @@ export const logger = (req: Request, res: Response, next: NextFunction) => {
   const { method, originalUrl, ip } = req;
   const userAgent = req.headers["user-agent"];
 
-  res.on("finish", () => {
+  res.on("finish", async () => {
     const contentLength = res.get("content-length");
     const { statusCode } = res;
 
     const logMessage = `${method}\t${originalUrl}\t${statusCode}\t${contentLength}\t${userAgent}\t${ip}`;
-    logEvents(logMessage, "reqLog.log");
+
+    try {
+      await logEvents(logMessage, "reqLog.log");
+    } catch (error) {
+      console.error(error);
+    }
   });
+
   next();
 };

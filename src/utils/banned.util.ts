@@ -19,7 +19,7 @@ export const addBanned = (sourceCode: string): string => {
 
   try {
     if (!sourceCode.includes("#include")) {
-      return `#include "../../data/banned.h"\r\n${sourceCode}`;
+      return `#include "../../data/banned.h"\n${sourceCode}`;
     }
 
     const includeString = sourceCode.substring(
@@ -33,10 +33,10 @@ export const addBanned = (sourceCode: string): string => {
       0,
       sourceCode.indexOf(includeContent)
     )}
-    \r\n#include "../../data/banned.h"\r\n${includeContent}`;
+\n#include "../../data/banned.h"\n${includeContent}`;
 
     return updatedSourceCode;
   } catch (error) {
-    return `#include "../../data/banned.h"\r\n${sourceCode}`;
+    return `#include "../../data/banned.h"\n${sourceCode}`;
   }
 };

@@ -10,8 +10,8 @@ export const validate =
         query: req.query,
         params: req.params,
       });
-      return next();
+      next();
     } catch (error) {
-      return res.status(400).json({ message: "INVALID_REQUEST_BODY" });
+      res.status(400).json({ message: "INVALID_REQUEST_BODY" });
     }
   };
