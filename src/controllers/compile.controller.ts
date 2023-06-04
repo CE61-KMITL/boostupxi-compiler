@@ -41,7 +41,7 @@ const compile = async (
       testcases
     );
 
-    await submissionService.submit(
+    const result = await submissionService.submit(
       {
         questionId,
         compilationResult: status.result,
@@ -49,6 +49,8 @@ const compile = async (
       },
       token
     );
+    
+    return result;
   } catch (error) {
     console.log((error as Error).message);
   }
