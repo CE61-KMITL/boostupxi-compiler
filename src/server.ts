@@ -17,7 +17,7 @@ const app: Application = express();
 const coreTotal: number = os.cpus().length;
 
 app.use(logger);
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors<Request>(corsOptions));
 app.use(helmet());
