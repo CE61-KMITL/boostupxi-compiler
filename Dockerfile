@@ -30,7 +30,7 @@ USER node
 
 FROM ubuntu:20.04 As production
 
-RUN apt-get update && apt-get install gcc g++ nodejs npm build-essential
+RUN apt update -y && apt install gcc g++ nodejs npm build-essential -y
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/data ./data
