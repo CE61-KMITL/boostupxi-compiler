@@ -1,0 +1,33 @@
+name: Deploy to Self-Hosted
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clear Cache
+        run: |
+          docker stop ceboostxi-api
+          docker rm ceboostxi-api
+          docker rmi ceboostxi-api:latest
+      - name: Build Image
+        run: |
+          docker build --no-cache . \
+            --file Dockerfile \
+            --tag ceboostxi-api
+      - name: Run Image
+        run: |
+          docker run --restart always -d \
+            -e PORT=${{ secrets.PORT }} \
+            -e ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e API_URL=${{ secrets.API_URL }} \
+            -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+            --name ceboostxi-compiler \
+            ceboostxi-compiler:latest
