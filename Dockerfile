@@ -38,8 +38,8 @@ RUN apt-get update && apt-get install -y \
 
 FROM node:18-alpine As production
 
-COPY --from=compiler /usr/bin/gcc /usr/bin/gcc
-COPY --from=compiler /usr/bin/g++ /usr/bin/g++
+COPY --from=compiler /bin/sh/gcc /bin/sh
+COPY --from=compiler /bin/sh/g++ /bin/sh
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/data ./data
