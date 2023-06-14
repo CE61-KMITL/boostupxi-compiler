@@ -13,14 +13,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: Clear Cache
         run: |
-          docker stop ceboostxi-api
-          docker rm ceboostxi-api
-          docker rmi ceboostxi-api:latest
+          docker stop ceboostxi-compiler
+          docker rm ceboostxi-compiler
+          docker rmi ceboostxi-compiler:latest
       - name: Build Image
         run: |
           docker build --no-cache . \
             --file Dockerfile \
-            --tag ceboostxi-api
+            --tag ceboostxi-compiler
       - name: Run Image
         run: |
           docker run --restart always -d \
