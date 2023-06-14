@@ -14,7 +14,7 @@ import { environment } from "./config/environment";
 config();
 
 const app: Application = express();
-const coreTotal: number = os.cpus().length;
+const coreTotal: number = 4;
 
 app.use(logger);
 app.use(express.json({ limit: '1mb' }));
