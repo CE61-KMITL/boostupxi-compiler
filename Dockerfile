@@ -28,9 +28,13 @@ RUN npm ci --only=production && npm cache clean --force
 
 USER node
 
-FROM ubuntu:20.04 As production
+FROM node:18-alpine As production
 
-RUN apt update -y && apt install gcc g++ nodejs npm build-essential -y
+RUN apk add --no-cache \
+    build-base \
+    gcc \
+    g++ \
+    make
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/data ./data
