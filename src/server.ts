@@ -31,7 +31,7 @@ const errorHandler = async (err: any, req: Request, res: any, next: any) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
 
   res.status(statusCode).json({
-    message: err.message,
+    message: 'Error!!!',
   });
   next();
 };
