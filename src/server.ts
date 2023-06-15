@@ -25,6 +25,19 @@ app.use(helmet());
 app.use("/", baseRouter);
 app.use("/compile", compileRouter);
 
+const errorHandler = async (err: any, req: Request, res: any, next: any) => {
+  console.log(err);
+
+  const statusCode = res.statusCode ? res.statusCode : 500;
+
+  res.status(statusCode).json({
+    message: err.message,
+  });
+  next();
+};
+
+app.use(errorHandler);
+
 if (cluster.isPrimary) {
   for (let i = 0; i < coreTotal; i++) {
     cluster.fork();
