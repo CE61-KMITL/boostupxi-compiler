@@ -28,6 +28,6 @@ jobs:
             -e ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }} \
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -e API_URL=${{ secrets.API_URL }} \
-            -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+            --network reverse-proxy_default \
             --name ceboostxi-compiler \
             ceboostxi-compiler:latest
