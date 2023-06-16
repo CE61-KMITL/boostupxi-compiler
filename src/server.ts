@@ -8,7 +8,6 @@ import cluster from "cluster";
 import { baseRouter } from "./routes/base.route";
 import { compileRouter } from "./routes/compile.route";
 import { corsOptions } from "./config/corsOptions";
-import { logger } from "./middlewares/logger.middleware";
 import { environment } from "./config/environment";
 
 config();
@@ -16,7 +15,6 @@ config();
 const app: Application = express();
 const coreTotal: number = os.cpus().length;
 
-app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors<Request>(corsOptions));
