@@ -13,9 +13,10 @@ import { environment } from "./config/environment";
 config();
 
 const app: Application = express();
-const coreTotal: number = os.cpus().length;
 
-app.use(express.json());
+// const coreTotal: number = os.cpus().length;
+const coreTotal: number = Math.min(os.cpus().length, 4);
+app.use(express.json({ limit: '200kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors<Request>(corsOptions));
 app.use(helmet());
@@ -29,7 +30,7 @@ const errorHandler = async (err: any, req: Request, res: any, next: any) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
 
   res.status(statusCode).json({
-    message: err.message,
+    message: 'Error!!!',
   });
   next();
 };

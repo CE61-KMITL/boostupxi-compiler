@@ -60,7 +60,7 @@ export const compilerService = {
       const executablePath = path.join(exeFolderPath, filename);
       execSync(`g++ -w -std=c++14 ${filePath} -o ${executablePath}`);
       return { result: "", executablePath: executablePath };
-    } catch (error) {
+    } catch (error: any) {
       if (error.message.includes("_IS_A_BANNED_FUNCTION")) {
         return { result: "F", executablePath: "" };
       }
