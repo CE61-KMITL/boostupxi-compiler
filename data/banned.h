@@ -47,4 +47,8 @@
 #define fmax(...) BANNED(fmax)
 #undef fmin
 #define fmin(...) BANNED(fmax)
+#undef asm
+#define asm(...) BANNED(asm)
+#undef __asm__
+#define __asm__(...) BANNED(__asm__)
 #endif /* BANNED_H */
