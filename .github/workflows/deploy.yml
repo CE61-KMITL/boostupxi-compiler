@@ -18,9 +18,7 @@ jobs:
           docker rmi ceboostxi-compiler:latest || true
       - name: Build Image
         run: |
-          docker build --no-cache . \
-            --file Dockerfile \
-            --tag ceboostxi-compiler
+          docker build . --file Dockerfile --tag ceboostxi-compiler
       - name: Run Image
         run: |
           docker run --restart always -d \
